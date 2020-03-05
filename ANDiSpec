@@ -1,0 +1,79 @@
+ANDi (ANonymisation des Données d'individus)/iDNA
+=================================================
+
+Sencario utilisateur : donner en paramètre l'ancienne base, les paramètres d'anonymisation, evt les paramètres de la nouvelle base, et obtenir des données générées en retour
+
+misc : listes au format CSV
+interface : 
+
+Paramètres : 
+- base actuelle + cred
+- liste de valeurs numériques à randomiser (table, champ, max, min). 
+- liste de valeurs catégorielles à randomiser (table, champ) équiprobabilité
+- Epsilon 
+
+Comportement :
+- les valeurs qui ne sont pas dans la liste à randomiser sont ignorées
+- Pour chaque entrée dans la table :	
+	- 
+
+
+Paramètre optionnels : 
+- base actuelle + cred
+- base nouvelle + cred
+- liste généralisation (table, champ)
+- champs texte à anonymiser (table, champ)
+- liste de valeurs numériques à randomiser (table, champ) -> requête SQL à faire.
+- liste de valeurs catégorielles à randomiser (table, champ, clef) -> valeur. Alternative à l'équiprobabilité
+- liste de valeurs date (table, champ) à généraliser. 
+
+Inutiles : 
+- liste de champs identifiants : liste de champs dont les valeurs seront nulles dans la nouvelle base puisqu'identifiants. Format de la liste : (table, champ). Par défaut formée par la liste des champs qui ne sont pas dans les listes d'anonymisation
+
+https://github.com/IBM/differential-privacy-library 
+
+Installation de DiffPrivLib :
+- install python 
+- install pip 
+	- curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+	- python get-pip.py 
+pip install diffprivlib
+
+
+
+
+########################## postgres
+pip3 install psycopg2-binary
+sudo apt-get install postgres
+
+En tant que postgres
+vi /etc/postgresql/10/main/pg_hba.conf (poour mettre les auth en md5
+
+En tant que moi: 
+sudo service postgresql stop
+sudo service postgresql start
+
+En tant que postgres
+createuser --interactive --pwprompt (pour créer le user adopter)
+createdb -O adopter adopter
+
+Pour importer le dump : 
+
+
+
+
+
+
+############################ USELESS NOTES ON MYSQL
+Installation de MySQL connector: 
+
+pip install mysql-connector-python
+
+installation de mysql :
+
+apt install mysql-client mysql-server
+
+cat /ec/mysql/debian.cnf
+
+create user identified by ...
+grant all privileges on *.* to user;
