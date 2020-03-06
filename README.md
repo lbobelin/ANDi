@@ -1,9 +1,18 @@
-*ANDi (ANonymisation des Données d'individus)*
+**ANDi (ANonymisation des Données d'individus)**
 
-Scenario utilisateur : donner en paramètre l'ancienne base, les paramètres d'anonymisation, evt les paramètres de la nouvelle base, et obtenir des données générées en retour
+*Principe* : Se connecte à une base Postgres, et sur une table choisie par l'utilisateur, y ajoute du bruit et retourne des commandes d'insertion pour populer une nouvelle table qui sera, elle,
+anonymisée par le buit. 
 
-misc : listes au format CSV
-interface : 
+*Détails techniques* Fonctionne en appliquant le principe de la [differential privacy](https://fr.wikipedia.org/wiki/Confidentialit%C3%A9_diff%C3%A9rentielle), en ajoutant du [bruit Laplacien](https://en.wikipedia.org/wiki/Differential_privacy#The_Laplace_mechanism) pour les données numériques, 
+et du bruit grâce au [mécanisme Exponentiel](https://en.wikipedia.org/wiki/Exponential_mechanism_(differential_privacy))  
+
+Ces 2 méthodes nécessitent de leur donner les paramètres suivants :
+
+
+
+*Détails d'implémentation* les listes contenues dans les fichiers dont les noms sont passés en paramètre doivent être au format CSV (Comma Separated Value).
+
+*interface* 
 
 Paramètres : 
 - base actuelle + cred
