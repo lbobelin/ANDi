@@ -22,9 +22,7 @@ Paramètres :
 
 Comportement :
 - les valeurs qui ne sont pas dans la liste à randomiser sont ignorées
-- Pour chaque entrée dans la table :	
-	- 
-
+- Pour chaque entrée dans la table 
 
 Paramètre optionnels : 
 - base actuelle + cred
