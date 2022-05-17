@@ -116,7 +116,7 @@ if args.varcat is not None:
 	randomgen.update(vcatexpm)
 if args.varnum is not None: 
 	randomgen.update(vnumlbd)
-	print(randomgen)
+	#print(randomgen)
 cursor.execute("SELECT " + ", ".join(randomgen.keys()) + " FROM " + args.table)
 result = cursor.fetchall()
 
@@ -128,6 +128,9 @@ for  record in result:
 				randomthings = randomthings + ", " + str(currvals[idx].randomise(float(val)))
 			except ValueError:
 				randomthings = randomthings[1:] + ", " + currvals[idx].randomise(val)
+			except TypeError:
+				randomthings = randomthings + ", None" #TODO : check 
+
 		randomthings = randomthings[1:]
 		print("INSERT INTO " + args.table + " (" + ", ".join(randomgen.keys()) + ") VALUES ("  + randomthings	+ ");")
 			
