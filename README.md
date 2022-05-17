@@ -1,5 +1,5 @@
 **ANDi (ANonymisation des Données d'individus)**
-
+**TODO : UPDATE !!**
 *Principe* : Se connecte à une base Postgres, et sur une table choisie par l'utilisateur, y ajoute du bruit et retourne des commandes d'insertion pour populer une nouvelle table qui sera, elle,
 anonymisée par le buit. 
 
@@ -12,7 +12,7 @@ Ces 2 méthodes nécessitent de leur donner les paramètres suivants :
 
 *Détails d'implémentation* les listes contenues dans les fichiers dont les noms sont passés en paramètre doivent être au format CSV (Comma Separated Value).
 
-*interface* 
+*interface NOT UP TO DATE* 
 
 Paramètres : 
 - base actuelle + cred
@@ -44,3 +44,8 @@ Installation de DiffPrivLib :
 	- curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 	- python get-pip.py 
 pip install diffprivlib
+
+*Exemple de ligne de commandes*
+
+venv/bin/python3.8 ANDi/ANDi.py -n ANDi/varnum.txt -c ANDi/varcat.txt -d 1  adopterrealdata volontaire adopter adopter  0.5 0.1 0.2 > outputscript.sql
+
