@@ -1,1 +1,1 @@
-taille, age, poids
+taille, age:0.1:0, poids:0:1:0.1:0.1:0.1

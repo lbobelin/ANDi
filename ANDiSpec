@@ -1,7 +1,53 @@
 ANDi (ANonymisation des Données d'individus)/iDNA
 =================================================
 
-Sencario utilisateur : donner en paramètre l'ancienne base, les paramètres d'anonymisation, evt les paramètres de la nouvelle base, et obtenir des données générées en retour
+Scenario utilisateur : donner en paramètre l'ancienne base, les paramètres d'anonymisation, evt les paramètres de la nouvelle base, et obtenir des données générées en retour
+
+
+
+misc : listes au format CSV et/ou en splittant avec des ":" pour les paramètres qui se suivent
+interface : 
+
+Paramètres : 
+- base actuelle + table + cred 
+- liste de valeurs numériques à randomiser (champ[:0|X:nombre_de_digit_après_la_virgule[:epsilon:delta:sentivity]]) dans un fichier, option -n
+- liste de valeurs catégorielles à randomiser (champ[:0|1[:distance:epsilon]]) équiprobabilité,  : None accepté ou non, distance et epsilon qui override si spécifié les valeurs générales
+- Epsilon 
+- Delta 
+- Sensitivity
+
+Comportement :
+- les valeurs qui ne sont pas dans la liste à randomiser sont ignorées
+- Pour chaque entrée dans la table :	
+	- 
+
+
+Paramètre optionnels : 
+- base actuelle + cred
+- base nouvelle + cred
+- liste généralisation (table, champ)
+- champs texte à anonymiser (table, champ)
+- liste de valeurs numériques à randomiser (table, champ) -> requête SQL à faire.
+- liste de valeurs catégorielles à randomiser (table, champ, clef) -> valeur. Alternative à l'équiprobabilité
+- liste de valeurs date (table, champ) à généraliser. 
+
+TODO : ajouter un fichier "raw" ou les champs sont copiés sans bruits. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=== v0.1 ====
 
 misc : listes au format CSV
 interface : 

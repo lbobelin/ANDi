@@ -1,0 +1,14 @@
+beniget==0.4.1
+Cython==0.29.28
+diffprivlib==0.4.1
+gast==0.5.3
+joblib==1.1.0
+numpy==1.22.3
+pkg-resources==0.0.0
+ply==3.11
+psycopg2==2.9.3
+pybind11==2.9.2
+pythran==0.11.0
+scikit-learn==1.1.0
+SciPy==1.8.0
+threadpoolctl==3.1.0

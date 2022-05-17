@@ -1,1 +1,1 @@
-titre, ville
+titre, profession:1, code_postal:1:0.1:0.1
