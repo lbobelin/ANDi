@@ -11,31 +11,31 @@ des listes d'attributs (par type : numérique, catégorielle et brute) que l'on 
 sont pas listées sont ignorées. 
 
 ## Usage
+```
+usage: ANDi.py [-h] [-n VARNUM] [-c VARCAT] [-r RAW] [-d DISTANCE] [-v] database table user password epsilon delta sensitivity
 
-> usage: ANDi.py [-h] [-n VARNUM] [-c VARCAT] [-r RAW] [-d DISTANCE] [-v] database table user password epsilon delta sensitivity
->
-> ANDi (ANonymisation des Données d'individus)
->
-> positional arguments:
->  database              nom de la base
->  table                 table
->  user                  utilisateur
->  password              mot de passe
->  epsilon               Epsilon pour les valeurs numériques
->  delta                 Delta pour les valeurs numériques
->  sensitivity           Sensibilité pour les valeurs numériques
->
-> optional arguments:
->  -h, --help            show this help message and exit
->  -n VARNUM, --varnum VARNUM
->                        Fichier contenant la liste des champs numériques à randomiser séparés par des virgules ou des sauts de lignes
->  -c VARCAT, --varcat VARCAT
->                        Fichier contenant la liste des champs catégoriels à randomiser séparés par des virgules ou des sauts de lignes
->  -r RAW, --raw RAW     Fichier contenant la liste des champs à transmettre sans modifications séparés par des virgules ou des sauts de lignes
->  -d DISTANCE, --distance DISTANCE
->                        Distance par défaut pour l'exponentiel (catégoriel)
->  -v, --verbose         increase output verbosity
+ANDi (ANonymisation des Données d'individus)
 
+positional arguments:
+  database              nom de la base
+  table                 table
+  user                  utilisateur
+  password              mot de passe
+  epsilon               Epsilon pour les valeurs numériques
+  delta                 Delta pour les valeurs numériques
+  sensitivity           Sensibilité pour les valeurs numériques
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -n VARNUM, --varnum VARNUM
+                        Fichier contenant la liste des champs numériques à randomiser séparés par des virgules ou des sauts de lignes
+  -c VARCAT, --varcat VARCAT
+                        Fichier contenant la liste des champs catégoriels à randomiser séparés par des virgules ou des sauts de lignes
+  -r RAW, --raw RAW     Fichier contenant la liste des champs à transmettre sans modifications séparés par des virgules ou des sauts de lignes
+  -d DISTANCE, --distance DISTANCE
+                        Distance par défaut pour l'exponentiel (catégoriel)
+  -v, --verbose         increase output verbosity
+```
 
 ## Détails d'implémentation
 ### Contenus des fichiers de paramètres
@@ -45,15 +45,17 @@ Les listes contenues dans les fichiers doivent être au format CSV (Comma Separa
 
 ### Exemples
 #### Numériques
-> taille, age:0.1:0, poids:0:1:0.1:0.1:0.1 
-
+```
+taille, age:0.1:0, poids:0:1:0.1:0.1:0.1 
+```
 - taille : avec les valeurs epsilon delta et sensitivity données en ligne de commande (ou par défaut si non spécifiées en ligne de commandes)
 - age : 0.1/1 probabilité d'être remplacé par NULL, arrondi à l'entier le plus proche
 - poids : 0% de chances d'être NULL, Arrrondi au dixième le plus proche, epsilon 0.1, delta 0.1, sentivity 0.1
 
 #### Catégorielles
-> titre, profession:1, code_postal:1:0.1:0.1
-
+```
+titre, profession:1, code_postal:1:0.1:0.1
+```
 - titre : avec les valeurs epsilon et delta données en ligne de commande (ou par défaut si non spécifiées en ligne de commandes). les valeurs NULL sont conservées
 - profession : idem, mais NULL est une catégorie comme une autre
 - code_postal : NULL est une catégorie comme une autre,  epsilon 0.1, delta 0.1 
@@ -61,10 +63,11 @@ Les listes contenues dans les fichiers doivent être au format CSV (Comma Separa
 Nota : toutes les valeurs sont symétriques dans cette implémentatin de la matrice du mécanisme exponentiel.
 
 #### Données non transformées 
-> bmi, fumeur
-
+```
+bmi, fumeur
+```
 (pas d'options)
 # Exemple de ligne de commandes
-
-> venv/bin/python3.8 ANDi/ANDi.py -n ANDi/varnum.txt -c ANDi/varcat.txt -d 1  adopterrealdata volontaire adopter adopter  0.5 0.1 0.2 > outputscript.sql
-
+```
+venv/bin/python3.8 ANDi/ANDi.py -n ANDi/varnum.txt -c ANDi/varcat.txt -d 1  adopterrealdata volontaire adopter adopter  0.5 0.1 0.2 > outputscript.sql
+```
