@@ -22,6 +22,11 @@ class LaplaceBoundedDomainWithFormat(LaplaceBoundedDomain):
 		self.mylower = mylower
 		self.myupper = myupper
 
+# Raw structure
+class RawValue:
+	def randomise(self, val):
+		return val
+	noneprobability = 0
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
@@ -43,6 +48,7 @@ parser.add_argument('delta', type=float, help='Delta pour les valeurs numérique
 parser.add_argument('sensitivity', type=float, help='Sensibilité pour les valeurs numériques')
 parser.add_argument("-n", "--varnum", type=str, help='Fichier contenant la liste des champs numériques à randomiser séparés par des virgules ou des sauts de lignes')
 parser.add_argument("-c", "--varcat", type=str, help='Fichier contenant la liste des champs catégoriels à randomiser séparés par des virgules ou des sauts de lignes')
+parser.add_argument("-r", "--raw", type=str, help='Fichier contenant la liste des champs à transmettre sans modifications séparés par des virgules ou des sauts de lignes')
 parser.add_argument('-d', "--distance", type=int, help='Distance par défaut pour l\'exponentiel (catégoriel)')
 parser.add_argument("-v", "--verbose", action="store_true", help="increase output verbosity")
 args = parser.parse_args()
@@ -177,6 +183,26 @@ if args.varcat is not None:
 		vcatexpm[currvcat] = cem
 vcattime = time.perf_counter()
 eprint(f"Prepared var cat objects in  {vcattime - vnumtime:0.4f} seconds")
+# Dealing with raw values
+if args.raw is not None:
+	#Checking if file exists
+	try:
+	    fvr = open(args.raw)
+	except IOError:
+	    print("fichier valeur brutes introuvable")
+	    sys.exit()
+
+	#Getting the varnum list
+	Lines = fvr.readlines()
+	rawlist = []
+	for line in Lines:
+		line = line.strip()
+		rawlist = rawlist + line.split(", ")
+	rawgen = RawValue()
+	vrawgen = {}
+	for currraw in rawlist:
+		vrawgen[currraw] = rawgen
+
 #for any line in the database, generating a noisy one
 		# Mixing all generators together
 randomgen = {}
@@ -184,6 +210,9 @@ if args.varcat is not None:
 	randomgen.update(vcatexpm)
 if args.varnum is not None:
 	randomgen.update(vnumlbd)
+if args.raw is not None:
+	randomgen.update(vrawgen)
+
 	#print(randomgen)
 cursor.execute("SELECT " + ", ".join(randomgen.keys()) + " FROM " + args.table)
 result = cursor.fetchall()
@@ -204,9 +233,14 @@ for  record in result:
 				randomthings = randomthings + ", " + currvals[idx].randomise(str(val))
 			except TypeError:
 				# Should be random between lower and upper with uniform
-				randomthings = randomthings + ", " + str(round(random.uniform(currvals[idx].mylower,currvals[idx].myupper),
+				try:
+					randomthings = randomthings + ", " + str(round(random.uniform(currvals[idx].mylower,currvals[idx].myupper),
 					currvals[idx].numberOfDigits))
-
+				except AttributeError:
+					if val is None:
+						randomthings = randomthings + ", NULL "
+					else:
+						randomthings = randomthings + ", " + val
 		randomthings = randomthings[1:]
 		print("INSERT INTO " + args.table + " (" + ", ".join(randomgen.keys()) + ") VALUES ("  + randomthings[1:]	+ ");")
 
