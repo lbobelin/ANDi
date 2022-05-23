@@ -46,8 +46,11 @@ parser.add_argument('password', type=str, help='mot de passe')
 parser.add_argument('epsilon', type=float, help='Epsilon pour les valeurs numériques')
 parser.add_argument('delta', type=float, help='Delta pour les valeurs numériques')
 parser.add_argument('sensitivity', type=float, help='Sensibilité pour les valeurs numériques')
+parser.add_argument("-N", "--nullvalue", type=str, help='String pour dénoter null')
 parser.add_argument("-n", "--varnum", type=str, help='Fichier contenant la liste des champs numériques à randomiser séparés par des virgules ou des sauts de lignes')
 parser.add_argument("-c", "--varcat", type=str, help='Fichier contenant la liste des champs catégoriels à randomiser séparés par des virgules ou des sauts de lignes')
+parser.add_argument("-i", "--index", action="store_true", help="Generates an index that will be the same for two inserts : one with raw values and one with values with noise")
+parser.add_argument("-f", "--csv", action="store_true", help="To generate CSV")
 parser.add_argument("-r", "--raw", type=str, help='Fichier contenant la liste des champs à transmettre sans modifications séparés par des virgules ou des sauts de lignes')
 parser.add_argument('-d', "--distance", type=int, help='Distance par défaut pour l\'exponentiel (catégoriel)')
 parser.add_argument("-v", "--verbose", action="store_true", help="increase output verbosity")
@@ -68,6 +71,10 @@ except Exception as error:
 
 connectime = time.perf_counter()
 eprint(f"Connected to database in {connectime - parsetime:0.4f} seconds")
+
+nullvalue="NULL"
+if args.nullvalue is not None:
+	nullvalue = args.nullvalue
 
 if args.varnum is None and args.varcat is None:
 	print("Il faut au moins un champ à anonymiser, et aucun fichier de conf n'a été passé")
@@ -169,12 +176,18 @@ if args.varcat is not None:
 		#find distinct values in columns and generating utility list
 		cursor.execute("SELECT DISTINCT "+ currvcat +" FROM " + args.table)
 		result = cursor.fetchall()
-		#Adding NULL as a possibility if necessary
+		strlist = [i[0] for i in result]
+		try:
+			idxNull = strlist.index(None)
+			del result[idxNull]
+		except ValueError:
+			#Does nothing
+			pass
 		if (currnoneval):
-			result + ["NULL"]
+			result.append((nullvalue, ))
 		for i in result:
 			for j in result:
-				if i != j:
+				if str(i[0]) != str(j[0]):
 					cutil.append((str(i[0]),str(j[0]),currdistance))
 		#adding it to the dict
 		cem.set_utility(cutil)
@@ -216,8 +229,7 @@ if args.raw is not None:
 	#print(randomgen)
 cursor.execute("SELECT " + ", ".join(randomgen.keys()) + " FROM " + args.table)
 result = cursor.fetchall()
-
-for  record in result:
+for  ridx, record in enumerate(result):
 		randomthings = ""
 		currvals = list(randomgen.values());
 
@@ -227,22 +239,55 @@ for  record in result:
 				if (currvals[idx].noneprobability < currand):
 					randomthings = randomthings + ", " + str(round(currvals[idx].randomise(float(val)),currvals[idx].numberOfDigits))
 				else:
-					randomthings = randomthings + ", NULL"
+					randomthings = randomthings + ", " + nullvalue + " "
 			except (ValueError, AttributeError) as e :
 				# Works because first eval is made on randomise so you don't have to check for numberOfdigits existence
-				randomthings = randomthings + ", " + currvals[idx].randomise(str(val))
+				if val is None or val == "None":
+					val = nullvalue
+				try:
+					randomthings = randomthings + ", " + currvals[idx].randomise(str(val))
+				except ValueError:
+					#Happens when I don't consider nullvalue as part of the domain, so it fails, and I should go to keep the nullvalue
+					randomthings = randomthings + ", " + nullvalue
 			except TypeError:
 				# Should be random between lower and upper with uniform
 				try:
 					randomthings = randomthings + ", " + str(round(random.uniform(currvals[idx].mylower,currvals[idx].myupper),
 					currvals[idx].numberOfDigits))
 				except AttributeError:
-					if val is None:
-						randomthings = randomthings + ", NULL "
+					if val is None or val == "None":
+						randomthings = randomthings + ", " + nullvalue + " "
 					else:
 						randomthings = randomthings + ", " + val
 		randomthings = randomthings[1:]
-		print("INSERT INTO " + args.table + " (" + ", ".join(randomgen.keys()) + ") VALUES ("  + randomthings[1:]	+ ");")
+		if (not args.csv):
+			if (args.index):
+				record_string = []
+				for rec in record:
+					if rec is None or rec == "None":
+						record_string.append(nullvalue)
+					else:
+						record_string.append(str(rec))
+				print("INSERT INTO " + args.table + " (AIDX, " + ", ".join(randomgen.keys()) + ") VALUES (" + str(ridx) + ", " + ",".join(record_string)+ ");")
+				print("INSERT INTO " + args.table + " (AIDX, " + ", ".join(randomgen.keys()) + ") VALUES (" + str(ridx) + ", "+ randomthings[1:] + ");")
+			else:
+				print("INSERT INTO " + args.table + " (" + ", ".join(randomgen.keys()) + ") VALUES ("  + randomthings[1:]	+ ");")
+		else:
+			if (args.index):
+				record_string = []
+				for rec in record:
+					if rec is None or rec == "None":
+						record_string.append(nullvalue)
+					else:
+						record_string.append(str(rec))
+				if ridx == 0:
+					print("AIDX, " + ", ".join(randomgen.keys()))
+				print(str(ridx) + ", " +  ",".join(record_string))
+				print(str(ridx) + ", " + randomthings[1:])
+			else:
+				if ridx == 0:
+					print(", ".join(randomgen.keys()))
+				print(randomthings[1:])
 
 #closing database connection
 vrandomtime = time.perf_counter()
