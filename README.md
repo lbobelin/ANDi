@@ -1,5 +1,4 @@
 # ANDi (ANonymisation des Données d'individus)
-
 ## Principe
 Se connecte à une base Postgres, et sur une table choisie par l'utilisateur, y ajoute du bruit et retourne des commandes d'insertion pour populer une nouvelle table qui sera, elle,
 anonymisée par le buit. 
@@ -12,7 +11,7 @@ sont pas listées sont ignorées.
 
 ## Usage
 ```
-usage: ANDi.py [-h] [-n VARNUM] [-c VARCAT] [-r RAW] [-d DISTANCE] [-v] database table user password epsilon delta sensitivity
+usage: ANDi.py [-h] [-N NULLVALUE] [-n VARNUM] [-c VARCAT] [-i] [-f] [-r RAW] [-d DISTANCE] [-v] database table user password epsilon delta sensitivity
 
 ANDi (ANonymisation des Données d'individus)
 
@@ -27,14 +26,19 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+  -N NULLVALUE, --nullvalue NULLVALUE
+                        String pour dénoter null
   -n VARNUM, --varnum VARNUM
                         Fichier contenant la liste des champs numériques à randomiser séparés par des virgules ou des sauts de lignes
   -c VARCAT, --varcat VARCAT
                         Fichier contenant la liste des champs catégoriels à randomiser séparés par des virgules ou des sauts de lignes
+  -i, --index           Generates an index that will be the same for two inserts : one with raw values and one with values with noise
+  -f, --csv             To generate CSV instead of INSERT - default : INSERT
   -r RAW, --raw RAW     Fichier contenant la liste des champs à transmettre sans modifications séparés par des virgules ou des sauts de lignes
   -d DISTANCE, --distance DISTANCE
                         Distance par défaut pour l'exponentiel (catégoriel)
   -v, --verbose         increase output verbosity
+
 ```
 
 ## Détails d'implémentation
